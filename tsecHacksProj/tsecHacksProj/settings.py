@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 # Application definition
 
 INSTALLED_APPS = [
@@ -54,7 +54,7 @@ ROOT_URLCONF = 'tsecHacksProj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

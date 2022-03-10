@@ -1,42 +1,37 @@
-{% extends 'Quiz/dependencies.html' %}
-
-{% block content %}
-{% load static %}
 <div class="container ">
-    <h1>Welcome to DataFlair Quiz</h1>
+    <h1>Welcome to Quiz</h1>
 
     <div align="right " id="displaytimer"><b>Timer: 0 seconds</b></div>
 
     <form method='post' action=''>
         {% csrf_token %}
-        {% q = page_obj.object_list[0] %}
+        {% for q in questions%}
         <div class="form-group">
             <label for="question">{{q.question}}</label>
         </div>
         <div class="form-check">
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="{{q.question}}" id="gridRadios1" value="option1"
-                    checked>
+                <input class="form-check-input" type="radio" name="{{q.question}}" id="gridRadios1" value="option1">
                 <label class="form-check-label" for="gridRadios1">
-                    {{q.op1}}
+                    {{q.answer}}
                 </label>
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="{{q.question}}" id="gridRadios2" value="option2">
                 <label class="form-check-label" for="gridRadios2">
-                    {{q.op2}}
+                    December 1, 1990
                 </label>
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="{{q.question}}" id="gridRadios1" value="option3">
                 <label class="form-check-label" for="gridRadios1">
-                    {{q.op3}}
+                    February 24, 1999
                 </label>
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="{{q.question}}" id="gridRadios2" value="option4">
                 <label class="form-check-label" for="gridRadios2">
-                    {{q.op4}}
+                    August 17, 2009
                 </label>
             </div>
             <br>
@@ -44,26 +39,7 @@
         {% endfor %}
         <input id='timer' type='hidden' name="timer" value="">
         <br>
-        <div class="pagination">
-            <span class="step-links">
-                {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-                {% endif %}
-
-                <span class="current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                </span>
-
-                {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
-        {% if not page_obj.has_next %}
         <button type="submit" class="btn btn-primary">Submit</button>
-        {% endif %}
     </form>
     {% block script %}
     <script>
@@ -83,4 +59,13 @@
     {% endblock script %}
 
 </div>
-{% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+    crossorigin="anonymous"></script>

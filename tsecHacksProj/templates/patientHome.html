@@ -110,7 +110,7 @@ body::before {
   </div>
   <div class="row">
 
-    <a><div class="card" style="background-color: hotpink;"></div></a>
+    <a href='{% url "memory" %}'><div class="card" style="background-color: hotpink;"></div></a>
     <a><div class="card" style="background-color: red"></div></a>
   </div>
   <div class="row">
@@ -124,7 +124,11 @@ body::before {
   </div>
 
   <!------------------------>
-
-  
+  <div class="joke">
+    {{ joke }}
+  </div>
+  <script>
+    
+  </script>
   </body>
 </html>

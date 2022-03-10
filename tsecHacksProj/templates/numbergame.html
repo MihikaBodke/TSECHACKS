@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            }
+            canvas {
+            position: absolute;
+            z-index: -2;
+            }
+        </style>
+
+    </head>
+<body>
+
+<canvas></canvas>
+<input type="file" id="image-input">
+<input type="range" min="3" max="5" step="1" id="map-size-input" value="3">
+
+<script>
+    const canvas = document.querySelector("canvas");
+    const context = canvas.getContext("2d");
+    const imageInput = document.querySelector("#image-input");
+    const mapSizeInput = document.querySelector("#map-size-input");
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+
+    // Constants
+    let MAP_WIDTH = 3;
+    let MAP_HEIGHT = 3;
+    const CARD_SIZE = 80;
+    const CARD_COLOR = "#121212";
+
+    let map = [];
+    let targetMap = [];
+    let isGameOver = false;
+    const image = new Image();
+    let imageLoaded = false;
+
+    // Generate map
+    generateMap();
+    function generateMap() {
+    map = [];
+    targetMap = [];
+    
+    for (let mapY = 0; mapY < MAP_HEIGHT; mapY ++) {
+        map.push([]);
+        targetMap.push([]);
+        for (let mapX = 0; mapX < MAP_WIDTH; mapX ++) {
+        map[mapY].push(null);
+        targetMap[mapY].push((mapX + MAP_WIDTH*mapY).toString());
+        }
+    }
+    for (let i = 0; i < MAP_WIDTH*MAP_HEIGHT-1; i ++) { 
+        tryFill(i);
+    }
+    function tryFill(i) {
+        const x = random(0, MAP_WIDTH);
+        const y = random(0, MAP_HEIGHT);
+
+        const card = map[y][x];
+        if (!card) {
+        map[y][x] = i.toString();
+        } else
+        tryFill(i);
+    }
+    }
+
+    function random(from, to) {
+    return Math.floor(Math.random() * (to - from) + from);
+    }
+    function getCurrentPos() {
+    const pos = {
+        x: 0, y: 0
+    };
+    
+    for (let mapY = 0; mapY < map.length; mapY ++)
+        for (let mapX = 0; mapX < map[mapY].length; mapX ++) {
+        if (map[mapY][mapX] === null) {
+            pos.x = mapX;
+            pos.y = mapY;
+            break;
+        }
+        }
+    
+    return pos;
+    }
+    function swap(offsetX=0, offsetY=0) {
+    const pos = getCurrentPos();
+    if (
+        pos.x+offsetX > MAP_WIDTH-1 ||
+        pos.y+offsetY > MAP_HEIGHT-1 ||
+        pos.x+offsetX < 0 ||
+        pos.y+offsetY < 0
+    ) return;
+    
+    const target = map[pos.y+offsetY][pos.x+offsetX];
+    map[pos.y+offsetY][pos.x+offsetX] = null;
+    map[pos.y][pos.x] = target;
+    }
+    function check() {
+    let need = 0;
+    
+    for (let mapY = 0; mapY < map.length; mapY ++) {
+        for (let mapX = 0; mapX < map[mapY].length; mapX ++) {
+        const card = map[mapY][mapX];
+        const targetCard = targetMap[mapY][mapX];
+        
+        if (card == targetCard)
+            need ++;
+        
+        }
+    }
+    
+    if (need >= MAP_WIDTH * MAP_HEIGHT-1)
+        gameOver();
+    }
+    function gameOver() {
+    isGameOver = true;
+    
+    context.fillStyle = "rgba(255, 255, 255, .8)";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    
+    context.fillStyle = "#000"
+    context.font = "22px Arial";
+    context.textAlign = "center";
+    context.fillText("You won!(Click)", canvas.width/2, canvas.height/2);
+    }
+
+    function onKeyDown(e) {
+    if (isGameOver) return;
+    
+    // Swap right
+    if (e.code == "ArrowRight" || e.code == "KeyD")
+        swap(-1);
+    // Swap left
+    if (e.code == "ArrowLeft" || e.code == "KeyA")
+        swap(1);
+    // Swap up
+    if (e.code == "ArrowUp" || e.code == "KeyW")
+        swap(0, 1);
+    // Swap down
+    if (e.code == "ArrowDown" || e.code == "KeyS")
+        swap(0, -1);
+    
+    render();
+    check();
+    }
+
+    // Render on start
+    render();
+    function render() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    
+    if (imageLoaded) {
+        context.drawImage(image, 20, 20, image.width / MAP_WIDTH, image.height / MAP_HEIGHT)
+    }
+    
+    for (let mapY = 0; mapY < map.length; mapY ++)
+        for (let mapX = 0; mapX < map[mapY].length; mapX ++) {
+        const card = map[mapY][mapX];
+        if (card) {
+        
+            const size = CARD_SIZE + 2;
+            const x = Math.floor(size * mapX + canvas.width/2 - size*MAP_WIDTH/2);
+            const y = Math.floor(size * mapY + canvas.height/2 - size*MAP_HEIGHT/2);
+
+            // Draw card
+            context.fillStyle = CARD_COLOR;
+            context.fillRect(
+            x, y,
+            CARD_SIZE, CARD_SIZE
+            );
+            
+            if (imageLoaded) {
+            const imgWidth = image.width / MAP_WIDTH;
+            const imgHeight = image.height / MAP_HEIGHT;
+            
+            // Draw card image
+            context.drawImage(
+                image,
+                // Slice
+                (+card % MAP_WIDTH) * imgWidth,
+                Math.floor(+card / MAP_WIDTH) * imgHeight,
+                imgWidth, imgHeight,
+                // Original
+                x, y,
+                CARD_SIZE, CARD_SIZE
+            )
+            } else {
+            // Draw card text
+            context.fillStyle = "#fff";
+            context.font = !imageLoaded ? "22px Arial" : "16px Arial";
+            context.textAlign = "center";
+            context.fillText((+card + 1).toString(), x + size/2, y + size/2 + 9);
+            }
+            
+        }
+        }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("pointerdown", ()=> {
+    if (!isGameOver) return;
+    
+    isGameOver = false;
+    generateMap();
+    render();
+    
+    });
+
+    // Upload image
+    imageInput.onchange = e=> {
+    if (imageInput.files.length == 0) return;
+    const file = imageInput.files[0];
+    if (!file) return;
+    
+    image.src = URL.createObjectURL(file);
+    
+    image.onload = ()=> {
+        imageLoaded = true;
+        generateMap();
+        render();
+        // context.drawImage(img, 10, 10, 100, 100);
+    }
+    
+    }
+    // Change map size
+    mapSizeInput.onchange = e=> {
+    MAP_WIDTH =
+    MAP_HEIGHT = +mapSizeInput.value;
+    
+    generateMap();
+    render();
+}
+</script>
+</body>
+</html>

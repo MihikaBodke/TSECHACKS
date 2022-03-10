@@ -11,5 +11,5 @@ admin.site.register(DailyRemarks)
 admin.site.register(PersonalDetails)
 admin.site.register(Memories)
 admin.site.register(Medicines)
-
+admin.site.register(CaretakerLogin)
 admin.site.register(Quiz)

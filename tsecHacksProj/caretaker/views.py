@@ -41,6 +41,9 @@ def careTakerAddMedicine(request):
         return render(request, 'careTakerAddMedicines.html', {"medicines": Medicines.objects.all().filter(patient=patient)})
 
 
+def careTakerHome(request):
+    return render(request, 'caretakerHome.html')
+
 # def getMedicines(request):
 
     # def createReminder(request):
@@ -75,3 +78,42 @@ def enterQuestions(request):
     else:
         form = EnterQuestionsForm()
         return render(request, 'EnterQuestions.html', {'form': form})
+
+
+
+def about(request):
+    return render(request, 'about.html')    
+def famLogin(request):
+    print("METHOD CALLED") 
+    if request.method == 'POST':
+        print("IT IS POSR")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        return redirect('/patientAnalysis')
+        return render(request, 'careTakerAddMedicine.html')
+    else:
+
+        return render(request, 'famLogin.html')
+
+
+def careTakerReminder(request):
+    if request.method == "POST":
+        reminder = request.POST['reminder']
+        print(reminder)
+        timestamp = request.POST['timestamp']
+        patient = Patient.objects.get(
+            patientID=int(request.session['patientID']))
+        obj = Reminders.objects.create(
+            patient=patient, reminder=reminder, remindTimeStamp = timestamp)
+        obj.save()
+        return render(request, 'careTakerAddReminders.html', {"reminders": Reminders.objects.all().filter(patient=patient)})
+
+    else:
+
+        patient = Patient.objects.get(
+            patientID=int(request.session['patientID']))
+
+        return render(request, 'careTakerAddReminders.html', {"reminders": Reminders.objects.all().filter(patient=patient)})
+
+def diet(request):
+    return render(request, 'diet.html')

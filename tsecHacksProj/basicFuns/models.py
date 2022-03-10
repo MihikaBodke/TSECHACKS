@@ -111,4 +111,8 @@ class Medicines(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     medicineName = models.CharField(max_length=100)
     medicineDosage = models.CharField(max_length=100)
-    
+
+
+class CaretakerLogin(models.Model):
+    email = models.EmailField()
+    password = models.CharField(max_length=50)

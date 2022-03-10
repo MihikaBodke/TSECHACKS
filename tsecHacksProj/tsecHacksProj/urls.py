@@ -18,19 +18,34 @@ from django.urls import path, include
 from basicFuns import views
 # import include
 from caretaker import views as caretakerViews
-from agora.views import Agora
+from organization import views as orgnViews
+# from agora.views import Agora
 urlpatterns = [
     path('', views.index),
 
     path('admin/', admin.site.urls),
-
+    path('login/', views.login, name="login"),
     path('games/', views.games, name="games"),
     path('reminders/', views.getReminders, name="reminders"),
-    path('memory/', views.getMemory),
+    path('memory/', views.getMemory, name="memory"),
     path('createReminder/', caretakerViews.createReminder),
-    path('patientHome/', views.patientHome),
+    path('patientHome/', views.patientHome, name="patientHome"),
     path('enterQuestions/', caretakerViews.enterQuestions),
     path('careTakerAddMedicine/', caretakerViews.careTakerAddMedicine),
+    path('careTakerHome/', caretakerViews.careTakerHome),
+    path('about/', caretakerViews.about, name="about"),
+    path('careTakerReminders/', caretakerViews.careTakerReminder, name="careTakerReminder"),
+    path('patientAnalysis', orgnViews.patientAnalysis),
+    path('orgnHome', orgnViews.orgnHome),
+    path('orgnLogin', orgnViews.orgnLogin, name="orgnlogin"),
+    path('familyMemberLogin', caretakerViews.famLogin, name="familyMemberLogin"),
+    path('quiz', views.quiz, name="quiz"),
+    path('remarks/', views.getDailyRemarks, name="getRemarks"),
+
+    path('numbergame/', views.numbergame, name="numbergame"),
+    path('matchcards/', views.matchcards, name="matchcards"),
+    path('diet/', caretakerViews.diet, name="diet"),
+
 
     # add agora calling link
     # path('agora-call/', Agora.as_view(
